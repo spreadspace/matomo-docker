@@ -1,0 +1,25 @@
+---
+branches:
+  only:
+    - master
+
+env:
+  global:
+    # DOCKER_EMAIL
+    - secure: "VBPQ/sPS238vNzx6+koEJdx02z7pYBGZRqgU1icQYscR7BzrgwV6ZISW2/DIUuixejIMEtE7YgthLHwpifqh48NJ4KJklX4QDFWrWxggfSfZzkRLr8DCklIGxiDSqxRRk//OVviQYr1WdudWmBnF3TpGvneiysBw706Pj/DM/slLBaOcfciLzABAGFWajSGkBidJcSdoceMu5/clMn0Nqyej2oW2K2VhOpCSV6i3Pg6xfhv+e22ke3SZTKM1nw37qEsx++nvZcVF+BmePqHzfdJqoqTZuDFguS+fRwfLE6nioxGj8vYNs1QIixGAM+saxHStrDxI/i9WCEJFYdkDgJgcnsmDy9DuTvpBvXrhFGpoMoNHU5SsPUcAJzQINPt2vm1lo7D161ipFjCVJEnGjK0IO6HAveTuZu/QbZ1KiQ2t2vVHVElnTXaQE7HEdq/w8U9LB/k+h4ArfDdItBC5FOFlO7XPfnSnu5XdMalnGnMVMEUOF5KaRKKgPiOJwrjwGSP9rcsrGI/jhugmfEXsf6W3/NYS4gmKd8mCnuZZCSIbKKEvRZ822PVtRIljlxVmaowohjArOm/cMZ6AeaN1zY7Lv3sPxPnT8yL+usXMXlo41amx+ggu7TY1walTqkgiDOOE6Osgu97Zdk7gZyIFZwJ9cFQ8ctTLCX6fCJCMfpE="
+    # DOCKER_USER
+    - secure: "X6IKbiJ096W3AuJdNjuSwUQ5M7KJc5YpU+n8cEhLw8Ue0+DDU7a8vItiKgDLQSY7VID23kMa2kZ0Bh08cLds6AhRZzq36gkIdtRTsN3qKEaNxjTd1G0pv5e+McXu1gvigP7xAtb68bJwRUE1vtjDFtUVtAnUw2AaK9YlvTSn0BI78OQoUx8ql3RPeLDtu//HLNns9gR7bFvMBkVnfBcfCFKsIN1ismLHDMS6hTvOs6dknWSIY+nfZb6fZqMGpZPlM7IcR4gYCMDAU2m9+LRlYBcnFCSZa7FtgpzzTLofoSg+1W060loo+4j/cR+90vaQ5o+RNYEFAdKLG7V5tubZa+V+mZ9z/G1/SRpgtMiUMILS2eHdLvBBQ97/YoyYQzrFHkGGEjgv5/QAgYWBIX11cw5po/tsvRPjob/Neq6oBkBVA9/B3imBOlB3MZMa7BJUstzBUQpvNnP9wl0Tb4CwwtGHJOH5e/EHzRdD8Im4TpLrRBVcNgNA4A3BVbNmzlDgtCG2joI9oiHTRzcFPxLUt9q28udnxBrwDrJFMD5FdT14NpAZgCCQtDISxwVFrmSVCEhZNhSInE9ZRLFVpv+tIyErAGtesH1OqQDt2ZQmYuexfZnT+T/82C+feo8/Na1NqIS3f4RwEhLOfvHe+ahMAN9hhlsN1O6j7vJ3OLyyCz8="
+    # DOCKER_PASS
+    - secure: "R0Uo6j2BEQYhWZPDbrUWLVIr75LEKGqAqhZYsx0PUL8kKLeb/ymElb5MKJKiEGsGC9JQM+7Zs3cl1IU+QjRKE3049FFupj7Ypoxz2vqh/wn+USoO2OMT6tfX4tjY7MvQzhN+m5urAz5ZMXkZUV+b7/BEqV7awMbqxN31yTnuyIXfIsKiEMj3ZseW2lMEPvITl3KMtYBVTJyxOXXfd7BZ+2oye2McVHfX984aFa3tLPQlClIDUU7M74WcCm12QD1oMejsZ5kOGCW3Cpj5VJ6WUMG0/VG9IFLUw1EiRliJkQ0Zv+aeVcEhbgYnhCPed6bd/uaE8qQ9It9HoMn872qfqN6kPXQl1frf25Hi7W/AEGhrVGnkC2zJ44agWbCFaVmz592qgMg/X3F79QbUwp5fh5BgwSNUnkg6OShQyWryTrsuzkYRMBOIvFdZfNyTkPGfA1FwTT0Se0ZhKf7d7Y0CLre/BYUD6TG8LYQVLnMhUfgTI7UlXzajUZiTtwuiDzSV/suY10ZFEdM9laOT92ZGPZtXPE9Quwg/GwbH4ggl6Ns/vBe9qq9KAuoc/CeS90KQMywQuIt2bNAFF/7WkryikXX4SyHr+9JHgEwFA7ZSovcqnl7kYGo0JB0zYFWu4SP3kE2ry9gClSw2BbFRiSVIFsJFShTa3VtAMQIvGNzBxTY="
+    - DOCKER_REPO=spreadspace/matomo
+
+script:
+  ### pull current images to potentially use docker build cache
+  - docker pull $DOCKER_REPO:latest
+  ### build the new images
+  - docker build -t $DOCKER_REPO:latest .
+  - docker tag $DOCKER_REPO:latest $DOCKER_REPO:$TRAVIS_BUILD_NUMBER
+  ### push to docker-hub
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker push $DOCKER_REPO:$TRAVIS_BUILD_NUMBER
+  - docker push $DOCKER_REPO:latest
