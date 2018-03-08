@@ -14,8 +14,6 @@ env:
     - DOCKER_REPO=spreadspace/matomo
 
 script:
-  ### pull current images to potentially use docker build cache
-  - docker pull $DOCKER_REPO:latest
   ### build the new images
   - docker build -t $DOCKER_REPO:latest .
   - docker tag $DOCKER_REPO:latest $DOCKER_REPO:$TRAVIS_BUILD_NUMBER
