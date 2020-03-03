@@ -1,4 +1,4 @@
-FROM piwik:3.3.0-fpm
+FROM matomo:3.13.3-fpm
 MAINTAINER Christian Pointner <equinox@spreadspace.org>
 
 RUN set -x \
